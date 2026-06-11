@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="ko">0090
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>건설안전관리자 스마트 홈</title>
+  <title>안전보건공단 스타일 - 이도겸 스마트 홈</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Firebase SDKs (호환성 및 안정성을 위해 전역 객체를 지원하는 v9 Compat 라이브러리 사용) -->
+  <!-- Firebase SDKs (v9 Compat 라이브러리 사용으로 안정적인 글로벌 객체 유지) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -18,58 +18,97 @@
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
     body {
       font-family: 'Noto Sans KR', sans-serif;
+      background-color: #f4f6fa;
+    }
+    /* 안전보건공단 브랜드 가이드 기반 컬러 정의 */
+    .kosha-blue {
+      background-color: #004b9e;
+    }
+    .text-kosha-blue {
+      color: #004b9e;
+    }
+    .border-kosha-blue {
+      border-color: #004b9e;
+    }
+    .kosha-sky {
+      background-color: #009fe3;
+    }
+    .text-kosha-sky {
+      color: #009fe3;
+    }
+    .kosha-dark {
+      background-color: #111e38;
     }
     .safe-yellow {
-      background-color: #FBBF24;
-    }
-    .safe-dark {
-      background-color: #1E293B;
+      background-color: #ffc20e;
     }
   </style>
 </head>
-<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+<body class="text-gray-800 flex flex-col min-h-screen">
 
-  <!-- 상단 네비게이션 바 -->
-  <header class="safe-dark text-white sticky top-0 z-50 shadow-md">
-    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-      <div class="flex items-center space-x-2 cursor-pointer" onclick="navigate('profile')">
-        <div class="safe-yellow text-slate-900 p-2 rounded-lg font-black flex items-center justify-center">
-          <i class="fa-solid fa-helmet-safety text-xl animate-bounce"></i>
+  <!-- 정부기관 스타일 상단 얇은 유틸바 -->
+  <div class="bg-gray-100 border-b border-gray-200 text-[11px] text-gray-500 py-1 hidden sm:block">
+    <div class="container mx-auto px-4 max-w-6xl flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <span class="font-semibold text-gray-700">대한민국 안전보건 파트너</span>
+        <span>|</span>
+        <span>현장 안전 강화 시스템 v2.6</span>
+      </div>
+      <div class="flex items-center space-x-3">
+        <a href="#" onclick="navigate('profile')" class="hover:underline">마이페이지</a>
+        <span>·</span>
+        <a href="https://www.kosha.or.kr" target="_blank" class="hover:underline text-kosha-blue font-semibold">안전보건공단 바로가기 <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 메인 네비게이션 바 (공단 공식 헤더 스타일) -->
+  <header class="bg-white text-slate-800 sticky top-0 z-50 border-b-4 border-kosha-blue shadow-sm">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center max-w-6xl">
+      <!-- 로고 영역 -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="navigate('profile')">
+        <div class="kosha-blue text-white p-2.5 rounded-lg flex items-center justify-center shadow-sm">
+          <i class="fa-solid fa-shield-halved text-2xl"></i>
         </div>
         <div>
-          <h1 class="text-lg font-bold tracking-tight">건설안전 스마트홈</h1>
-          <p class="text-xs text-amber-400">Construction Safety Manager</p>
+          <div class="flex items-center space-x-1.5">
+            <span class="text-xs font-black text-white bg-red-600 px-1.5 py-0.5 rounded">안전 제 1호</span>
+            <span class="text-xs font-bold text-gray-500">이도겸 안전포털</span>
+          </div>
+          <h1 class="text-lg font-extrabold tracking-tight text-slate-900 flex items-center">
+            한국안전보건공단 <span class="font-light text-kosha-blue ml-1.5">스마트홈</span>
+          </h1>
         </div>
       </div>
       
-      <!-- 데스크톱 메뉴 -->
-      <nav class="hidden md:flex space-x-1 font-medium">
-        <button onclick="navigate('profile')" id="nav-profile" class="px-4 py-2 rounded-md hover:bg-slate-700 transition duration-200 text-amber-400 border-b-2 border-amber-400">프로필</button>
-        <button onclick="navigate('laws')" id="nav-laws" class="px-4 py-2 rounded-md hover:bg-slate-700 transition duration-200">안전법령</button>
-        <button onclick="navigate('share')" id="nav-share" class="px-4 py-2 rounded-md hover:bg-slate-700 transition duration-200">자료공유방</button>
-        <button onclick="navigate('board')" id="nav-board" class="px-4 py-2 rounded-md hover:bg-slate-700 transition duration-200">소통게시판</button>
+      <!-- 데스크톱 메뉴 (공단 상단 메뉴 스타일) -->
+      <nav class="hidden md:flex space-x-1 font-bold">
+        <button onclick="navigate('profile')" id="nav-profile" class="px-5 py-2.5 rounded-md hover:text-kosha-blue transition duration-150 text-kosha-blue border-b-2 border-kosha-blue">프로필</button>
+        <button onclick="navigate('laws')" id="nav-laws" class="px-5 py-2.5 rounded-md hover:text-kosha-blue transition duration-150 text-gray-600">법령 가이드</button>
+        <button onclick="navigate('share')" id="nav-share" class="px-5 py-2.5 rounded-md hover:text-kosha-blue transition duration-150 text-gray-600">안전 자료실</button>
+        <button onclick="navigate('board')" id="nav-board" class="px-5 py-2.5 rounded-md hover:text-kosha-blue transition duration-150 text-gray-600">현장 소통광장</button>
       </nav>
 
       <!-- 사용자 정보 및 로그인 상태 -->
       <div class="flex items-center space-x-3">
-        <span id="user-tag" class="hidden md:inline-block bg-slate-700 text-xs px-3 py-1.5 rounded-full text-slate-300">
-          <i class="fa-solid fa-user-shield text-amber-400 mr-1"></i> <span id="user-id-display">접속 중...</span>
+        <span id="user-tag" class="hidden lg:inline-block bg-slate-100 text-[11px] px-3 py-1.5 rounded-md border border-gray-200 text-slate-600 font-mono">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span><span id="user-id-display">접속 중...</span>
         </span>
         <!-- 모바일 메뉴 버튼 -->
-        <button onclick="toggleMobileMenu()" class="md:hidden text-white focus:outline-none p-1">
+        <button onclick="toggleMobileMenu()" class="md:hidden text-slate-700 focus:outline-none p-1 hover:bg-gray-100 rounded">
           <i class="fa-solid fa-bars text-2xl"></i>
         </button>
       </div>
     </div>
 
     <!-- 모바일 드롭다운 메뉴 -->
-    <div id="mobile-menu" class="hidden md:hidden bg-slate-800 border-t border-slate-700 px-4 py-2 pb-4 space-y-2">
-      <button onclick="navigate('profile')" class="block w-full text-left py-2 px-3 rounded hover:bg-slate-700 text-white">프로필</button>
-      <button onclick="navigate('laws')" class="block w-full text-left py-2 px-3 rounded hover:bg-slate-700 text-white">안전법령</button>
-      <button onclick="navigate('share')" class="block w-full text-left py-2 px-3 rounded hover:bg-slate-700 text-white">자료공유방</button>
-      <button onclick="navigate('board')" class="block w-full text-left py-2 px-3 rounded hover:bg-slate-700 text-white">소통게시판</button>
-      <div class="border-t border-slate-700 pt-2 text-xs text-slate-400">
-        <i class="fa-solid fa-user-shield text-amber-400 mr-1"></i> ID: <span id="mobile-user-id-display">접속 중...</span>
+    <div id="mobile-menu" class="hidden md:hidden bg-slate-50 border-t border-gray-200 px-4 py-3 space-y-1 shadow-inner">
+      <button onclick="navigate('profile')" class="block w-full text-left py-2.5 px-3 rounded font-bold text-slate-700 hover:bg-slate-200">프로필</button>
+      <button onclick="navigate('laws')" class="block w-full text-left py-2.5 px-3 rounded font-bold text-slate-700 hover:bg-slate-200">법령 가이드</button>
+      <button onclick="navigate('share')" class="block w-full text-left py-2.5 px-3 rounded font-bold text-slate-700 hover:bg-slate-200">안전 자료실</button>
+      <button onclick="navigate('board')" class="block w-full text-left py-2.5 px-3 rounded font-bold text-slate-700 hover:bg-slate-200">현장 소통광장</button>
+      <div class="border-t border-gray-200 pt-2 text-[11px] text-slate-500 font-mono">
+        접속 ID: <span id="mobile-user-id-display">접속 중...</span>
       </div>
     </div>
   </header>
@@ -77,206 +116,233 @@
   <!-- 메인 콘텐츠 영역 -->
   <main class="flex-grow container mx-auto px-4 py-6 max-w-6xl">
     
-    <!-- 실시간 안전 알림 배너 -->
-    <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg mb-6 shadow-sm flex items-start justify-between">
-      <div class="flex space-x-3">
-        <i class="fa-solid fa-circle-exclamation text-amber-500 text-xl mt-0.5"></i>
+    <!-- 공단 공익 캠페인 스타일 배너 -->
+    <div class="bg-[#eaf4ff] border-l-8 border-kosha-blue p-5 rounded-r-xl mb-8 shadow-sm flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+      <div class="flex items-center space-x-4">
+        <div class="kosha-sky text-white p-3 rounded-full hidden sm:flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-bullhorn text-lg"></i>
+        </div>
         <div>
-          <h3 class="font-bold text-amber-900 text-sm md:text-base">오늘의 현장 핵심 안전 수칙</h3>
-          <p class="text-xs md:text-sm text-amber-700 mt-1">추락 예방용 안전난간 및 작업발판 설치 상태를 재확인하고, 고소 작업 시 반드시 안전대를 체결하도록 지도 바랍니다.</p>
+          <h3 class="font-extrabold text-kosha-blue text-base md:text-lg flex items-center">
+            안전은 권리이자 약속입니다 <span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full ml-2 font-bold animate-pulse">중요 공지</span>
+          </h3>
+          <p class="text-xs md:text-sm text-slate-700 mt-1 font-medium">관리자 이도겸 기사는 오늘 현장 순회시 추락 예방 장치의 철저한 검수를 실시합니다. 현장 근로자들은 작업 전 안전미팅(TBM)을 필히 완료해주십시오.</p>
         </div>
       </div>
-      <span class="text-xs text-amber-500 font-medium whitespace-nowrap bg-white px-2 py-1 rounded shadow-sm">D-DAY 상시점검</span>
+      <div class="flex space-x-2 shrink-0">
+        <span class="text-xs text-white font-bold bg-[#004b9e] px-3.5 py-1.5 rounded shadow-sm">무재해 원칙 준수</span>
+      </div>
     </div>
 
-    <!-- ==================== [1] 프로필 뷰 ==================== -->
+    <!-- ==================== [1] 프로필 뷰 (공단 소속 기술인 컨셉) ==================== -->
     <section id="view-profile" class="space-y-6">
-      <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
-        <!-- 배경 상단 바 -->
-        <div class="h-32 bg-gradient-to-r from-slate-800 to-slate-700 relative">
-          <div class="absolute bottom-2 right-4 text-xs text-slate-300 font-medium">안전은 타협할 수 없는 최고의 가치입니다.</div>
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
+        <!-- 공단 심볼 패턴 배경 -->
+        <div class="h-40 kosha-blue relative flex items-center px-8">
+          <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+          <div class="z-10 text-white">
+            <p class="text-xs text-kosha-sky font-extrabold tracking-widest uppercase">Safety Expert Portal</p>
+            <h2 class="text-2xl md:text-3xl font-black mt-1">현장 맞춤형 자율안전보건체계 실천</h2>
+          </div>
         </div>
         
-        <!-- 프로필 메인 정보 -->
+        <!-- 프로필 메인 카드 -->
         <div class="px-6 pb-6 relative">
-          <div class="flex flex-col sm:flex-row sm:items-end justify-between -mt-16 mb-6">
-            <div class="flex flex-col sm:flex-row items-center sm:items-end space-y-4 sm:space-y-0 sm:space-x-4">
+          <div class="flex flex-col md:flex-row md:items-end justify-between -mt-16 mb-6">
+            <div class="flex flex-col md:flex-row items-center md:items-end space-y-4 md:space-y-0 md:space-x-5">
               <!-- 프로필 아바타 -->
-              <div class="w-32 h-32 rounded-2xl border-4 border-white safe-yellow shadow-md flex items-center justify-center text-slate-900">
-                <i class="fa-solid fa-user-tie text-5xl"></i>
-              </div>
-              <div class="text-center sm:text-left">
-                <div class="flex items-center justify-center sm:justify-start space-x-2">
-                  <h2 class="text-2xl font-bold text-slate-900">이도겸</h2>
-                  <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-0.5 rounded-full font-semibold">산업안전기사</span>
+              <div class="w-36 h-36 rounded-xl border-4 border-white bg-slate-100 shadow-md overflow-hidden flex items-center justify-center text-slate-800">
+                <div class="w-full h-full kosha-dark flex flex-col items-center justify-center text-white">
+                  <i class="fa-solid fa-user-shield text-5xl mb-1 text-kosha-sky"></i>
+                  <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Manager</span>
                 </div>
-                <p class="text-slate-500 text-sm mt-1"><i class="fa-solid fa-location-dot mr-1"></i> 수도권 건설 프로젝트 현장 안전 보건 총괄</p>
+              </div>
+              <div class="text-center md:text-left">
+                <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start space-y-1.5 sm:space-y-0 sm:space-x-2">
+                  <h2 class="text-2xl font-black text-slate-900">이도겸</h2>
+                  <span class="bg-[#e5f1ff] text-kosha-blue text-xs px-3 py-1 rounded-full font-bold border border-blue-200">전문인증: 산업안전기사</span>
+                </div>
+                <p class="text-slate-500 text-sm mt-2 font-medium">
+                  <i class="fa-solid fa-helmet-safety text-kosha-sky mr-1"></i> 수도권 대규모 건설 공사 보건안전 책임자 (HL Company)
+                </p>
               </div>
             </div>
             
-            <div class="mt-4 sm:mt-0 flex justify-center space-x-2">
-              <a href="mailto:dogyeom.lee@hlcompany.com" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center">
-                <i class="fa-solid fa-envelope mr-1.5 flex items-center"></i> dogyeom.lee@hlcompany.com
+            <div class="mt-4 md:mt-0 flex justify-center space-x-2">
+              <a href="mailto:dogyeom.lee@hlcompany.com" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-gray-200 px-4 py-2.5 rounded-lg text-xs font-semibold transition flex items-center">
+                <i class="fa-solid fa-envelope mr-2 text-kosha-blue"></i> dogyeom.lee@hlcompany.com
               </a>
-              <button onclick="openContactModal()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-4 py-2 rounded-lg text-sm font-bold transition flex items-center">
-                <i class="fa-solid fa-phone mr-1.5"></i> 비상 연락망
+              <button onclick="openContactModal()" class="kosha-blue hover:bg-[#003d82] text-white px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center shadow-sm">
+                <i class="fa-solid fa-phone mr-2 text-amber-400"></i> 비상 대응망
               </button>
             </div>
           </div>
 
-          <hr class="border-gray-100 my-6">
+          <hr class="border-gray-200 my-6">
 
-          <!-- 프로필 상세 그리드 -->
+          <!-- 공단 스타일의 단정한 정보 배치 -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- 전문 분야 및 자격 -->
-            <div class="bg-slate-50 p-5 rounded-xl border border-slate-100">
-              <h3 class="font-bold text-slate-950 flex items-center mb-4 text-base">
-                <i class="fa-solid fa-id-card text-amber-500 mr-2 text-lg"></i> 전문 자격증 및 보유 기술
+            <!-- 전문 자격 리스트 -->
+            <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-xs">
+              <h3 class="font-extrabold text-slate-900 flex items-center mb-4 text-base border-b pb-2.5 border-gray-100">
+                <i class="fa-solid fa-certificate text-kosha-blue mr-2"></i> 공인 자격증 및 인적 역량
               </h3>
-              <ul class="space-y-2.5 text-sm text-slate-700">
-                <li class="flex items-center justify-between"><span class="font-medium">산업안전기사</span> <span class="text-xs text-slate-400">한국산업인력공단</span></li>
-                <li class="flex items-center justify-between"><span class="font-medium">건설안전기사</span> <span class="text-xs text-slate-400">한국산업인력공단</span></li>
-                <li class="flex items-center justify-between"><span class="font-medium">소방안전관리자 1급</span> <span class="text-xs text-slate-400">소방청</span></li>
-                <li class="flex items-center justify-between"><span class="font-medium">ISO 45001 심사원</span> <span class="text-xs text-slate-400">국제안전보건규격</span></li>
-              </ul>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between text-sm">
+                  <span class="font-semibold text-slate-800">산업안전기사</span>
+                  <span class="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-mono">한국산업인력공단</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="font-semibold text-slate-800">건설안전기사</span>
+                  <span class="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-mono">한국산업인력공단</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="font-semibold text-slate-800">소방안전관리자 1급</span>
+                  <span class="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-mono">소방청</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="font-semibold text-slate-800">ISO 45001 내부심사원</span>
+                  <span class="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-mono">국제안전보건규격</span>
+                </div>
+              </div>
             </div>
 
-            <!-- 주요 경력 사항 -->
-            <div class="bg-slate-50 p-5 rounded-xl border border-slate-100">
-              <h3 class="font-bold text-slate-950 flex items-center mb-4 text-base">
-                <i class="fa-solid fa-briefcase text-amber-500 mr-2 text-lg"></i> 안전 관리 실무 주요 경력
+            <!-- 안전 업무 이력 -->
+            <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-xs">
+              <h3 class="font-extrabold text-slate-900 flex items-center mb-4 text-base border-b pb-2.5 border-gray-100">
+                <i class="fa-solid fa-list-check text-kosha-blue mr-2"></i> 현장 안전보건 감독 경력
               </h3>
-              <ul class="space-y-3.5 text-sm text-slate-700">
-                <li class="relative pl-5 border-l-2 border-amber-300">
-                  <div class="absolute w-2 h-2 rounded-full bg-amber-500 -left-[5px] top-1.5"></div>
-                  <span class="font-semibold block text-xs text-amber-600">2023 - 현재</span>
-                  <span class="font-medium text-slate-900">대형 랜드마크 초고층 빌딩 안전보건 총괄</span>
-                </li>
-                <li class="relative pl-5 border-l-2 border-amber-100">
-                  <div class="absolute w-2 h-2 rounded-full bg-amber-300 -left-[5px] top-1.5"></div>
-                  <span class="font-semibold block text-xs text-slate-400">2020 - 2023</span>
-                  <span class="font-medium text-slate-900">대단지 주택재개발 정비사업 현장 안전팀장</span>
-                </li>
-                <li class="relative pl-5 border-l-2 border-amber-100">
-                  <div class="absolute w-2 h-2 rounded-full bg-amber-300 -left-[5px] top-1.5"></div>
-                  <span class="font-semibold block text-xs text-slate-400">2016 - 2020</span>
-                  <span class="font-medium text-slate-900">플랜트 건설사업 및 교량 토목공사 안전담당</span>
-                </li>
-              </ul>
+              <div class="space-y-4">
+                <div class="relative pl-5 border-l-2 border-kosha-blue">
+                  <div class="absolute w-2 h-2 rounded-full bg-kosha-blue -left-[5px] top-1.5"></div>
+                  <span class="font-bold text-[10px] text-kosha-sky block">2023 - PRESENT</span>
+                  <p class="text-xs font-bold text-slate-900">HL Company 초고층 랜드마크 신축현장 안전총괄</p>
+                </div>
+                <div class="relative pl-5 border-l-2 border-slate-200">
+                  <div class="absolute w-2 h-2 rounded-full bg-slate-300 -left-[5px] top-1.5"></div>
+                  <span class="font-bold text-[10px] text-gray-400 block">2020 - 2023</span>
+                  <p class="text-xs font-bold text-slate-800">대단지 주택재개발 정비사업 현장 안전팀장</p>
+                </div>
+                <div class="relative pl-5 border-l-2 border-slate-200">
+                  <div class="absolute w-2 h-2 rounded-full bg-slate-300 -left-[5px] top-1.5"></div>
+                  <span class="font-bold text-[10px] text-gray-400 block">2016 - 2020</span>
+                  <p class="text-xs font-bold text-slate-800">도로정비 및 해상 교량 안전관리담당관</p>
+                </div>
+              </div>
             </div>
 
-            <!-- 나의 안전 관리 철학 -->
-            <div class="bg-slate-50 p-5 rounded-xl border border-slate-100">
-              <h3 class="font-bold text-slate-950 flex items-center mb-4 text-base">
-                <i class="fa-solid fa-shield-halved text-amber-500 mr-2 text-lg"></i> 안전 관리 철학 및 다짐
+            <!-- 가치관 및 행동지침 -->
+            <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-xs">
+              <h3 class="font-extrabold text-slate-900 flex items-center mb-4 text-base border-b pb-2.5 border-gray-100">
+                <i class="fa-solid fa-heart-pulse text-kosha-blue mr-2"></i> 이도겸 기사의 안전 철학
               </h3>
-              <div class="text-sm leading-relaxed text-slate-600 space-y-2">
-                <p class="font-semibold text-slate-900">"근로자의 생명 존중이 최우선 가치입니다."</p>
-                <p>단순히 규정을 준수하도록 지시하는 통제형 안전 관리를 탈피하고, 근로자 스스로 위험 요소를 인지하고 예방 활동에 동참할 수 있는 상호작용적 자율 안전 문화를 정착시키는 것에 최선을 다합니다.</p>
+              <div class="text-xs leading-relaxed text-slate-600 space-y-2 font-medium">
+                <p class="font-extrabold text-kosha-blue text-sm">"현장의 모든 근로자가 곧 나의 가족입니다."</p>
+                <p>기본 규정과 작업 절차를 생략하고 타협하려는 현장의 구습을 타파하며, 매일 아침 전파되는 10분의 안전교육(TBM)이 생명을 구하는 가장 확실한 장치임을 믿고 실천합니다.</p>
               </div>
             </div>
           </div>
         </div>
       </div>
       
-      <!-- 안전관리 수치 요약판 -->
+      <!-- 공단 주요 실무지표 스타일 요약 현황판 -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
-          <span class="text-xs text-gray-500 font-medium block mb-1">무재해 달성 일수</span>
-          <span class="text-2xl font-black text-emerald-600">425일</span>
+        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-xs text-center">
+          <span class="text-[10px] text-gray-500 font-extrabold block mb-1">현장 무재해 유지 일수</span>
+          <span class="text-2xl font-black text-emerald-600">425일 <span class="text-xs font-normal text-gray-400">연속</span></span>
         </div>
-        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
-          <span class="text-xs text-gray-500 font-medium block mb-1">정기 유해위험평가</span>
-          <span class="text-2xl font-black text-blue-600">완료 (100%)</span>
+        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-xs text-center">
+          <span class="text-[10px] text-gray-500 font-extrabold block mb-1">정기 유해위험평가율</span>
+          <span class="text-2xl font-black text-kosha-blue">100% <span class="text-xs font-normal text-gray-400">완료</span></span>
         </div>
-        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
-          <span class="text-xs text-gray-500 font-medium block mb-1">안전보건 교육 횟수</span>
-          <span class="text-2xl font-black text-amber-500">128회</span>
+        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-xs text-center">
+          <span class="text-[10px] text-gray-500 font-extrabold block mb-1">특별 안전보건교육</span>
+          <span class="text-2xl font-black text-amber-500">128회 <span class="text-xs font-normal text-gray-400">진행</span></span>
         </div>
-        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
-          <span class="text-xs text-gray-500 font-medium block mb-1">현장 안전점검 누적</span>
-          <span class="text-2xl font-black text-purple-600">1,500회+</span>
+        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-xs text-center">
+          <span class="text-[10px] text-gray-500 font-extrabold block mb-1">누적 현장 불시점검수</span>
+          <span class="text-2xl font-black text-slate-800">1,500회 <span class="text-xs font-normal text-gray-400">돌파</span></span>
         </div>
       </div>
     </section>
 
-    <!-- ==================== [2] 법령 뷰 ==================== -->
+    <!-- ==================== [2] 법령 뷰 (공식 법령 가이드북 컨셉) ==================== -->
     <section id="view-laws" class="space-y-6 hidden">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 pb-4 border-b border-gray-100">
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 pb-4 border-b border-gray-200">
           <div>
-            <h2 class="text-2xl font-bold text-slate-900 flex items-center">
-              <i class="fa-solid fa-gavel text-amber-500 mr-2"></i> 핵심 건설 안전 보건 법령 요약
+            <h2 class="text-2xl font-black text-slate-900 flex items-center">
+              <i class="fa-solid fa-book-bookmark text-kosha-blue mr-2.5"></i> 산업안전보건 기준법 및 가이드
             </h2>
-            <p class="text-sm text-slate-500 mt-1">건설현장에서 필수적으로 숙지해야 하는 실무 기준 법령 요약 가이드</p>
+            <p class="text-xs text-slate-500 mt-1 font-medium">안전보건공단 가이드북을 기반으로 현장 실무자가 즉시 적용 가능하도록 요약한 주요 행정 법안</p>
           </div>
-          <!-- 법령 검색창 -->
+          <!-- 법령 검색창 (공단 포털 검색 엔진 느낌) -->
           <div class="mt-4 md:mt-0 relative w-full md:w-80">
-            <input type="text" id="law-search-input" onkeyup="filterLaws()" placeholder="법령 키워드 검색 (예: 추락, 신호수...)" class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent">
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400"></i>
+            <input type="text" id="law-search-input" onkeyup="filterLaws()" placeholder="법령, KOSHA GUIDE 키워드 검색..." class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 pl-10 pr-4 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-kosha-blue focus:border-transparent">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400"></i>
           </div>
         </div>
 
         <!-- 핵심 법령 카드 그리드 -->
         <div id="laws-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
           
-          <div class="law-card bg-slate-50 p-5 rounded-xl border border-slate-100 hover:shadow-md transition">
+          <div class="law-card bg-slate-50 p-5 rounded-lg border border-gray-200 hover:border-kosha-blue hover:shadow-md transition">
             <div class="flex justify-between items-start mb-2">
-              <span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-0.5 rounded font-bold">안전조치 의무</span>
-              <span class="text-xs text-slate-400">산안법 제38조</span>
+              <span class="bg-red-50 text-red-700 text-[10px] px-2.5 py-1 rounded font-bold border border-red-200">안전조치 의무</span>
+              <span class="text-xs text-gray-400 font-mono">산안법 제38조</span>
             </div>
-            <h3 class="font-bold text-slate-900 text-base mb-2">안전조치 의무 이행 및 위반 처벌</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
-              사업주는 건설공사 중 추락, 붕괴, 감전, 비래(날아옴), 낙하 등의 위험 예방 조치를 이행할 법적 의무가 있습니다. 위반으로 사망사고 발생 시 7년 이하의 징역 또는 1억원 이하의 벌금에 처해집니다.
+            <h3 class="font-extrabold text-slate-900 text-base mb-2">기본 위험 요인 예방 조치</h3>
+            <p class="text-xs text-slate-600 leading-relaxed font-medium">
+              건설현장 내 빈번히 발생하는 추락, 붕괴, 비래, 감전 등의 5대 메이저 유해위험 예방 시설물(작업발판, 난간대, 낙하물 방지망 등)의 설치 기준 및 법정 기준 미비 시 벌칙 조항을 수록합니다.
             </p>
-            <div class="mt-4 pt-3 border-t border-slate-200/50 flex justify-between items-center text-xs text-slate-500">
-              <span>태그: #추락 #붕괴 #위험예방 #사업주의무</span>
-              <button onclick="showLawDetail('안전조치 의무', '법 제38조에 명시된 사업주의 기본적인 유해위험 방지조치입니다. 비계 설치, 통로 확보, 거푸집 동바리 안전조치, 전기 누전 방지 등이 포함됩니다.')" class="text-amber-600 font-semibold hover:underline">전문 보기</button>
+            <div class="mt-4 pt-3 border-t border-gray-200 flex justify-between items-center text-[10px] text-gray-500 font-medium">
+              <span>#비계 #안전난간 #추락방지</span>
+              <button onclick="showLawDetail('안전조치 의무', '법 제38조에 명시된 사업주의 기본적인 유해위험 방지조치입니다. 비계 설치, 통로 확보, 거푸집 동바리 안전조치, 전기 누전 방지 등이 포함됩니다.')" class="text-kosha-blue font-bold hover:underline">공식 가이드 확인</button>
             </div>
           </div>
 
-          <div class="law-card bg-slate-50 p-5 rounded-xl border border-slate-100 hover:shadow-md transition">
+          <div class="law-card bg-slate-50 p-5 rounded-lg border border-gray-200 hover:border-kosha-blue hover:shadow-md transition">
             <div class="flex justify-between items-start mb-2">
-              <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-0.5 rounded font-bold">중대재해</span>
-              <span class="text-xs text-slate-400">중대재해처벌법</span>
+              <span class="bg-amber-50 text-amber-800 text-[10px] px-2.5 py-1 rounded font-bold border border-amber-200">중대재해대응</span>
+              <span class="text-xs text-gray-400 font-mono">중대재해처벌법</span>
             </div>
-            <h3 class="font-bold text-slate-900 text-base mb-2">중대재해 처벌 등에 관한 법률 (중처법)</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
-              사망자 1명 이상 발생하거나 동일 사고로 6개월 이상 치료가 필요한 부상자가 2명 이상 발생 시 적용됩니다. 경영책임자의 안전보건 확보 의무 이행 여부에 따라 1년 이상의 징역형이 부과될 수 있습니다.
+            <h3 class="font-extrabold text-slate-900 text-base mb-2">중대재해 처벌 등에 관한 법률 (중처법)</h3>
+            <p class="text-xs text-slate-600 leading-relaxed font-medium">
+              동일 사고로 인한 중대요인 발생 시 경영책임자의 실무 안전보건확보의무 이행체계를 심사합니다. 유해위험 확인 개선 절차 마련 여부가 대표적인 기소 예방 핵심 사안입니다.
             </p>
-            <div class="mt-4 pt-3 border-t border-slate-200/50 flex justify-between items-center text-xs text-slate-500">
-              <span>태그: #경영책임자 #사망사고 #확보의무</span>
-              <button onclick="showLawDetail('중대재해처벌법', '경영책임자가 실질적으로 안전보건관리체계를 구축하고 이행해야 하는 핵심 법안입니다. 현장의 유해위험인자 확인 및 개선 절차가 수립되었는지가 관건입니다.')" class="text-amber-600 font-semibold hover:underline">전문 보기</button>
+            <div class="mt-4 pt-3 border-t border-gray-200 flex justify-between items-center text-[10px] text-gray-500 font-medium">
+              <span>#경영책임자 #위험개선 #법률대응</span>
+              <button onclick="showLawDetail('중대재해처벌법', '경영책임자가 실질적으로 안전보건관리체계를 구축하고 이행해야 하는 핵심 법안입니다. 현장의 유해위험인자 확인 및 개선 절차가 수립되었는지가 관건입니다.')" class="text-kosha-blue font-bold hover:underline">공식 가이드 확인</button>
             </div>
           </div>
 
-          <div class="law-card bg-slate-50 p-5 rounded-xl border border-slate-100 hover:shadow-md transition">
+          <div class="law-card bg-slate-50 p-5 rounded-lg border border-gray-200 hover:border-kosha-blue hover:shadow-md transition">
             <div class="flex justify-between items-start mb-2">
-              <span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-0.5 rounded font-bold">특별교육</span>
-              <span class="text-xs text-slate-400">산안법 시행규칙 제26조</span>
+              <span class="bg-blue-50 text-blue-700 text-[10px] px-2.5 py-1 rounded font-bold border border-blue-200">특별안전교육</span>
+              <span class="text-xs text-gray-400 font-mono">시행규칙 제26조</span>
             </div>
-            <h3 class="font-bold text-slate-900 text-base mb-2">건설업 유해위험 작업 특별안전보건교육</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
-              굴착작업, 거푸집 및 비계 조립/해체 작업, 타워크레인 신호 작업 등 총 40개 유해위험작업에 종사하는 근로자는 작업 배치 전 16시간(단기간/간헐적 작업은 2시간) 이상의 특별 교육을 의무적으로 이수해야 합니다.
+            <h3 class="font-extrabold text-slate-900 text-base mb-2">40개 특수 고위험 공정 대상 교육</h3>
+            <p class="text-xs text-slate-600 leading-relaxed font-medium">
+              타워크레인 신호 작업, 비계 조립/해체, 굴착작업 등의 위험 공종 투입 전, 대상 근로자에게 시행하는 16시간의 필수 법정 교육 기준과 교육일지 작성 필수 항목을 안내합니다.
             </p>
-            <div class="mt-4 pt-3 border-t border-slate-200/50 flex justify-between items-center text-xs text-slate-500">
-              <span>태그: #특별교육 #비계조립 #타워크레인 #작업배치전</span>
-              <button onclick="showLawDetail('특별안전교육 목록 및 규정', '시행규칙 별표5에 수록된 40가지 특별교육 대상 작업을 관리해야 합니다. 교육일지, 서명부, 사진 등 증빙서류의 3년간 보존은 필수입니다.')" class="text-amber-600 font-semibold hover:underline">전문 보기</button>
+            <div class="mt-4 pt-3 border-t border-gray-200 flex justify-between items-center text-[10px] text-gray-500 font-medium">
+              <span>#신호수 #고소작업 #교재지원</span>
+              <button onclick="showLawDetail('특별안전교육 목록 및 규정', '시행규칙 별표5에 수록된 40가지 특별교육 대상 작업을 관리해야 합니다. 교육일지, 서명부, 사진 등 증빙서류의 3년간 보존은 필수입니다.')" class="text-kosha-blue font-bold hover:underline">공식 가이드 확인</button>
             </div>
           </div>
 
-          <div class="law-card bg-slate-50 p-5 rounded-xl border border-slate-100 hover:shadow-md transition">
+          <div class="law-card bg-slate-50 p-5 rounded-lg border border-gray-200 hover:border-kosha-blue hover:shadow-md transition">
             <div class="flex justify-between items-start mb-2">
-              <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-0.5 rounded font-bold">안전보건관리비</span>
-              <span class="text-xs text-slate-400">고시 제2023-74호</span>
+              <span class="bg-emerald-50 text-emerald-800 text-[10px] px-2.5 py-1 rounded font-bold border border-emerald-200">안전관리비</span>
+              <span class="text-xs text-gray-400 font-mono">고시 제2023-74호</span>
             </div>
-            <h3 class="font-bold text-slate-900 text-base mb-2">산업안전보건관리비 계상 및 사용기준</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
-              총 공사금액 2천만 원 이상 건설공사에 적용되며, 공사 규모 및 종류에 따른 요율표에 맞춰 예산을 계상해야 합니다. 안전관리자의 인건비, 안전시설물 구입 및 설치비, 보호구 구입 등에 목적 범위에 맞춰 적정하게 사용하여야 합니다.
+            <h3 class="font-extrabold text-slate-900 text-base mb-2">산업안전보건관리비 효율적 집행 관리</h3>
+            <p class="text-xs text-slate-600 leading-relaxed font-medium">
+              공사종류와 규모별로 산출된 법정 예산을 불인정 항목에 낭비하지 않고 방호장치, 보호구, 현장 유해환경 점검용 장비 임대 등에 체계적으로 사용하는 항목 분석표입니다.
             </p>
-            <div class="mt-4 pt-3 border-t border-slate-200/50 flex justify-between items-center text-xs text-slate-500">
-              <span>태그: #계상기준 #요율표 #안전모 #안전시설비</span>
-              <button onclick="showLawDetail('산업안전보건관리비 세부사용기준', '안전보건관리비는 공사 진행 단계별로 정산 사용률을 확인해야 합니다. 임의 사용이나 자재 구입비용의 오사용은 과태료 및 계약 해지 사유가 됩니다.')" class="text-amber-600 font-semibold hover:underline">전문 보기</button>
+            <div class="mt-4 pt-3 border-t border-gray-200 flex justify-between items-center text-[10px] text-gray-500 font-medium">
+              <span>#요율계산 #사용불가품목 #방호장치</span>
+              <button onclick="showLawDetail('산업안전보건관리비 세부사용기준', '안전보건관리비는 공사 진행 단계별로 정산 사용률을 확인해야 합니다. 임의 사용이나 자재 구입비용의 오사용은 과태료 및 계약 해지 사유가 됩니다.')" class="text-kosha-blue font-bold hover:underline">공식 가이드 확인</button>
             </div>
           </div>
 
@@ -284,18 +350,18 @@
       </div>
     </section>
 
-    <!-- ==================== [3] 공유게시판 뷰 (자료실 형태) ==================== -->
+    <!-- ==================== [3] 공유게시판 뷰 (공단 자료실 컨셉) ==================== -->
     <section id="view-share" class="space-y-6 hidden">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-gray-100">
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-gray-200">
           <div>
-            <h2 class="text-2xl font-bold text-slate-900 flex items-center">
-              <i class="fa-solid fa-folder-open text-amber-500 mr-2"></i> 안전 실무 자료 공유방
+            <h2 class="text-2xl font-black text-slate-900 flex items-center">
+              <i class="fa-solid fa-server text-kosha-blue mr-2.5"></i> 현장 자율 안전보건 자료센터
             </h2>
-            <p class="text-sm text-slate-500 mt-1">양식, 일지, 체크리스트, 우수사례 등 유용한 실무 자료를 공유하는 공간입니다.</p>
+            <p class="text-xs text-slate-500 mt-1 font-medium">이도겸 기사가 현장에 실제로 적용한 양식, 점검표, 교육자료 다운로드 보관함</p>
           </div>
-          <button onclick="openWriteModal('share')" class="mt-4 sm:mt-0 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-lg text-sm flex items-center justify-center transition">
-            <i class="fa-solid fa-upload mr-1.5"></i> 자료 올리기
+          <button onclick="openWriteModal('share')" class="mt-4 sm:mt-0 bg-kosha-blue hover:bg-[#003d82] text-white font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center transition shadow-sm">
+            <i class="fa-solid fa-file-arrow-up mr-2 text-amber-400"></i> 실무 자료 등록
           </button>
         </div>
 
@@ -303,47 +369,47 @@
         <div id="share-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- 로딩중 표시 -->
           <div class="col-span-full text-center py-12 text-slate-400">
-            <i class="fa-solid fa-spinner animate-spin text-3xl mb-2"></i>
-            <p class="text-sm">데이터를 안전하게 불러오는 중입니다...</p>
+            <i class="fa-solid fa-spinner animate-spin text-3xl mb-2 text-kosha-blue"></i>
+            <p class="text-xs">데이터베이스와 보안 연결망을 구축하고 있습니다...</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ==================== [4] 소통게시판 뷰 (일반 자유형태) ==================== -->
+    <!-- ==================== [4] 소통게시판 뷰 (열린 민원/소통창 컨셉) ==================== -->
     <section id="view-board" class="space-y-6 hidden">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-gray-100">
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-gray-200">
           <div>
-            <h2 class="text-2xl font-bold text-slate-900 flex items-center">
-              <i class="fa-solid fa-comments text-amber-500 mr-2"></i> 안전인 소통 게시판
+            <h2 class="text-2xl font-black text-slate-900 flex items-center">
+              <i class="fa-solid fa-people-group text-kosha-blue mr-2.5"></i> 열린 안전 신문고 및 소통광장
             </h2>
-            <p class="text-sm text-slate-500 mt-1">현장 애로사항 공유, 질문과 답변, 자유로운 의견 교환을 나누는 열린 소통창구입니다.</p>
+            <p class="text-xs text-slate-500 mt-1 font-medium">안전보건 관련 질의응답, 현장 위험요인 제보 및 자유로운 현업 피드백</p>
           </div>
-          <button onclick="openWriteModal('board')" class="mt-4 sm:mt-0 bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2 rounded-lg text-sm flex items-center justify-center transition">
-            <i class="fa-solid fa-pen-to-square mr-1.5"></i> 글쓰기
+          <button onclick="openWriteModal('board')" class="mt-4 sm:mt-0 bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center transition shadow-sm">
+            <i class="fa-solid fa-pen-nib mr-2 text-kosha-sky"></i> 제안/게시글 작성
           </button>
         </div>
 
-        <!-- 일반 게시판 리스트 (표 형태 또는 카드 형태) -->
-        <div class="bg-slate-50 rounded-xl overflow-hidden border border-slate-100">
+        <!-- 일반 게시판 리스트 (표 형태) -->
+        <div class="bg-white rounded-lg overflow-hidden border border-gray-200 shadow-xs">
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
-                <tr class="bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-wider border-b border-slate-200">
-                  <th class="py-3.5 px-4 w-16 text-center">번호</th>
-                  <th class="py-3.5 px-4">제목</th>
-                  <th class="py-3.5 px-4 w-32">작성자</th>
-                  <th class="py-3.5 px-4 w-28 text-center">날짜</th>
-                  <th class="py-3.5 px-4 w-20 text-center">기능</th>
+                <tr class="bg-gray-50 text-slate-700 font-bold text-xs border-b border-gray-200">
+                  <th class="py-4 px-4 w-16 text-center">No</th>
+                  <th class="py-4 px-4">제 안 제 목</th>
+                  <th class="py-4 px-4 w-32">제안인</th>
+                  <th class="py-4 px-4 w-28 text-center">접수일</th>
+                  <th class="py-4 px-4 w-20 text-center">현황</th>
                 </tr>
               </thead>
-              <tbody id="board-table-body" class="divide-y divide-slate-100 text-sm text-slate-700">
+              <tbody id="board-table-body" class="divide-y divide-gray-100 text-xs text-slate-700 font-medium">
                 <!-- 로딩중 표시 -->
                 <tr>
                   <td colspan="5" class="py-12 text-center text-slate-400">
-                    <i class="fa-solid fa-spinner animate-spin text-2xl mb-2"></i>
-                    <p class="text-xs">게시글 목록 로딩 중...</p>
+                    <i class="fa-solid fa-spinner animate-spin text-2xl mb-2 text-kosha-blue"></i>
+                    <p class="text-[11px]">소통 광장 의견 수렴 중...</p>
                   </td>
                 </tr>
               </tbody>
@@ -355,101 +421,115 @@
 
   </main>
 
-  <!-- 하단 푸터 푸터 -->
-  <footer class="safe-dark text-slate-400 text-xs py-8 border-t border-slate-800 mt-12">
-    <div class="container mx-auto px-4 max-w-6xl flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-      <div class="text-center md:text-left">
-        <p class="font-bold text-sm text-white mb-1"><i class="fa-solid fa-helmet-safety text-amber-400 mr-1"></i> 이도겸의 스마트 건설안전 홈</p>
-        <p>본 사이트는 건설현장의 체계적인 안전 정보 전파 및 현장 관계자 소통을 위한 개인 홈페이지입니다.</p>
-        <p class="mt-1 text-slate-500">Copyright &copy; 2026. All Rights Reserved.</p>
+  <!-- 하단 푸터 (공공기관 공식 웹 스타일) -->
+  <footer class="kosha-dark text-slate-400 text-xs py-10 border-t-4 border-kosha-sky mt-16">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <div class="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0 pb-6 border-b border-slate-800">
+        <div class="text-center md:text-left">
+          <div class="flex items-center justify-center md:justify-start space-x-2 text-white font-black text-sm mb-2">
+            <i class="fa-solid fa-shield-halved text-kosha-sky text-lg"></i>
+            <span>이도겸 안전보건 스마트 시스템</span>
+          </div>
+          <p class="text-slate-500 text-[11px] leading-relaxed">
+            본 사이트는 건설안전관리자 이도겸 기사의 개인 포트폴리오 겸 현장 실무 소통용 가상 웹서비스입니다.<br>
+            현장 내 모든 작업 및 교육 자료의 2차 활용에 따른 법적 귀책사유는 사용 주체에게 있습니다.
+          </p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-4 text-slate-300 font-bold text-[11px]">
+          <a href="#" class="hover:text-white transition" onclick="navigate('profile')">개인정보처리방침</a>
+          <span>|</span>
+          <a href="#" class="hover:text-white transition" onclick="navigate('laws')">KOSHA 기준실</a>
+          <span>|</span>
+          <a href="#" class="hover:text-white transition" onclick="navigate('share')">자료실 바로가기</a>
+          <span>|</span>
+          <a href="#" class="hover:text-white transition" onclick="navigate('board')">안전신문고</a>
+        </div>
       </div>
-      <div class="flex space-x-4 text-slate-300">
-        <a href="#" class="hover:text-amber-400 transition" onclick="navigate('profile')">프로필</a>
-        <a href="#" class="hover:text-amber-400 transition" onclick="navigate('laws')">법령실</a>
-        <a href="#" class="hover:text-amber-400 transition" onclick="navigate('share')">공유방</a>
-        <a href="#" class="hover:text-amber-400 transition" onclick="navigate('board')">게시판</a>
+      <div class="flex flex-col sm:flex-row justify-between items-center pt-6 text-[11px] text-slate-600 font-medium">
+        <span>HL Company 주소: 서울특별시 강남구 테헤란로 HL안전타워 11층</span>
+        <span class="mt-2 sm:mt-0">Copyright &copy; 2026 Dogyeom Lee. All Rights Reserved.</span>
       </div>
     </div>
   </footer>
 
-  <!-- ==================== [모달 1] 연락처/비상망 모달 ==================== -->
-  <div id="contact-modal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-      <div class="safe-dark text-white p-4 flex justify-between items-center">
-        <h3 class="font-bold flex items-center"><i class="fa-solid fa-phone-volume text-amber-400 mr-2"></i> 긴급 현장 연락망</h3>
-        <button onclick="closeContactModal()" class="text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+  <!-- ==================== [모달 1] 연락처/비상대응 모달 ==================== -->
+  <div id="contact-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-md w-full shadow-2xl overflow-hidden">
+      <div class="kosha-blue text-white p-4 flex justify-between items-center">
+        <h3 class="font-extrabold flex items-center text-sm"><i class="fa-solid fa-phone-volume text-amber-400 mr-2"></i> 현장 비상 대응 연락망</h3>
+        <button onclick="closeContactModal()" class="text-slate-300 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
       <div class="p-6 space-y-4">
-        <div class="bg-red-50 border-l-4 border-red-500 p-3 rounded-r-md text-xs text-red-800 font-medium">
-          ※ 중대재해 및 긴급 위험 상황 발생 시 즉시 아래 비상연락처나 소방서(119), 고용노동부로 지체 없이 신고 후 매뉴얼대로 대응합니다.
+        <div class="bg-red-50 border-l-4 border-red-600 p-3 rounded text-[11px] text-red-900 font-bold">
+          [경고] 현장 중대재해 및 긴급 비상사태 목격 시 즉시 대피 후 아래 직통 및 비상 신고망으로 타 지체 없이 동시 연락바랍니다.
         </div>
-        <div class="space-y-3 text-sm">
-          <div class="flex justify-between items-center py-2 border-b border-gray-100">
-            <span class="font-semibold text-slate-800">건설안전총괄 (이도겸)</span>
-            <a href="tel:010-1234-5678" class="text-blue-600 font-bold hover:underline"><i class="fa-solid fa-phone mr-1"></i> 010-1234-5678</a>
+        <div class="space-y-2.5 text-xs">
+          <div class="flex justify-between items-center py-2 border-b border-gray-100 font-medium">
+            <span class="text-gray-800 font-bold">안전보건관리자 (이도겸)</span>
+            <a href="tel:010-1234-5678" class="text-kosha-blue font-extrabold hover:underline"><i class="fa-solid fa-phone mr-1"></i> 010-1234-5678</a>
           </div>
-          <div class="flex justify-between items-center py-2 border-b border-gray-100">
-            <span class="font-semibold text-slate-800">현장 주 사무실</span>
-            <a href="tel:02-987-6543" class="text-slate-600 font-bold"><i class="fa-solid fa-phone mr-1"></i> 02-987-6543</a>
+          <div class="flex justify-between items-center py-2 border-b border-gray-100 font-medium">
+            <span class="text-gray-800">현장 보건 상황실</span>
+            <span class="text-slate-600 font-bold">02-987-6543</span>
           </div>
-          <div class="flex justify-between items-center py-2 border-b border-gray-100">
-            <span class="font-semibold text-slate-800">안전보건공단 당직실</span>
-            <span class="text-slate-600 font-medium">1588-0075</span>
+          <div class="flex justify-between items-center py-2 border-b border-gray-100 font-medium">
+            <span class="text-gray-800">안전보건공단 당직망</span>
+            <span class="text-slate-600 font-bold">1588-0075</span>
           </div>
-          <div class="flex justify-between items-center py-2">
-            <span class="font-semibold text-slate-800">긴급 신고전화 (소방)</span>
+          <div class="flex justify-between items-center py-2 font-medium">
+            <span class="text-red-600 font-bold">긴급 구조 신고 (소방)</span>
             <a href="tel:119" class="text-red-600 font-black hover:underline"><i class="fa-solid fa-triangle-exclamation mr-1 animate-pulse"></i> 119</a>
           </div>
         </div>
       </div>
-      <div class="bg-gray-50 px-6 py-3 flex justify-end">
-        <button onclick="closeContactModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition">확인 완료</button>
+      <div class="bg-gray-50 px-6 py-3 flex justify-end border-t border-gray-100">
+        <button onclick="closeContactModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-xs font-bold transition">점검완료</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== [모달 2] 법령 팝업 모달 ==================== -->
-  <div id="law-detail-modal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full shadow-xl overflow-hidden">
-      <div class="bg-amber-500 text-slate-950 p-4 flex justify-between items-center">
-        <h3 id="law-detail-title" class="font-bold flex items-center"><i class="fa-solid fa-scale-balanced mr-2"></i> 법령명</h3>
-        <button onclick="closeLawDetailModal()" class="text-slate-800 hover:text-black transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+  <!-- ==================== [모달 2] 법령/KOSHA Guide 상세 모달 ==================== -->
+  <div id="law-detail-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-lg w-full shadow-2xl overflow-hidden">
+      <div class="bg-kosha-blue text-white p-4 flex justify-between items-center">
+        <h3 id="law-detail-title" class="font-extrabold flex items-center text-sm"><i class="fa-solid fa-scale-balanced mr-2"></i> 법령명</h3>
+        <button onclick="closeLawDetailModal()" class="text-slate-300 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
       <div class="p-6">
-        <p id="law-detail-desc" class="text-sm text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-100">
-          상세 법령 내용이 이곳에 표시됩니다.
+        <p id="law-detail-desc" class="text-xs text-slate-700 leading-relaxed whitespace-pre-line bg-gray-50 p-4 rounded-lg border border-gray-200 font-medium">
+          안전 가이드 상세 내용이 이곳에 명시됩니다.
         </p>
       </div>
-      <div class="bg-gray-50 px-6 py-3 flex justify-end">
-        <button onclick="closeLawDetailModal()" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition">닫기</button>
+      <div class="bg-gray-50 px-6 py-3 flex justify-end border-t border-gray-100">
+        <button onclick="closeLawDetailModal()" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-xs font-bold transition">닫기</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== [모달 3] 글쓰기 / 글수정 모달 ==================== -->
-  <div id="write-modal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full shadow-xl overflow-hidden">
-      <div class="safe-dark text-white p-4 flex justify-between items-center">
-        <h3 id="write-modal-title" class="font-bold flex items-center"><i class="fa-solid fa-pen mr-2 text-amber-400"></i> 새 글 올리기</h3>
-        <button onclick="closeWriteModal()" class="text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+  <!-- ==================== [모달 3] 글쓰기 / 수정 폼 모달 ==================== -->
+  <div id="write-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-lg w-full shadow-2xl overflow-hidden">
+      <div class="kosha-blue text-white p-4 flex justify-between items-center">
+        <h3 id="write-modal-title" class="font-extrabold flex items-center text-sm"><i class="fa-solid fa-pen mr-2 text-amber-400"></i> 새 글 올리기</h3>
+        <button onclick="closeWriteModal()" class="text-slate-300 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
       <form id="post-form" onsubmit="savePost(event)" class="p-6 space-y-4">
         <input type="hidden" id="post-id">
         <input type="hidden" id="post-target-view">
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">작성자</label>
-          <input type="text" id="post-author" required placeholder="본인 성함 혹은 닉네임" class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent">
+          <label class="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">제안/작성인</label>
+          <input type="text" id="post-author" required placeholder="본인 성명 혹은 직위" class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2 px-3 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-kosha-blue">
         </div>
         
         <div>
-          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">제목</label>
-          <input type="text" id="post-title" required placeholder="제목을 입력하세요" class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent">
+          <label class="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">제안 제목</label>
+          <input type="text" id="post-title" required placeholder="내용을 식별할 수 있는 제목" class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2 px-3 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-kosha-blue">
         </div>
 
         <div id="share-field-category" class="hidden">
-          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">자료 분류</label>
-          <select id="post-category" class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent">
+          <label class="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">자료 공종 분류</label>
+          <select id="post-category" class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2 px-3 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-kosha-blue">
             <option value="양식/일지">📄 양식/일지</option>
             <option value="체크리스트">✅ 체크리스트</option>
             <option value="안전교육자료">📚 교육자료</option>
@@ -458,61 +538,61 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">상세 내용 및 공유 링크</label>
-          <textarea id="post-content" required rows="6" placeholder="내용을 정성껏 기재해주세요. 파일 다운로드나 외부 자료 공유가 필요한 경우 공유 URL 링크(Drive 등)를 포함해 작성해주시면 편리합니다." class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent resize-none"></textarea>
+          <label class="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider mb-1">실무 기재사항 및 링크 주소</label>
+          <textarea id="post-content" required rows="6" placeholder="자료에 대한 상세 내용 또는 다운로드 가능한 외부 파일 링크(Google Drive 등)를 상세히 포함해 기재해주시기 바랍니다." class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2 px-3 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-kosha-blue resize-none"></textarea>
         </div>
 
-        <div class="flex justify-end space-x-2 pt-2">
-          <button type="button" onclick="closeWriteModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-lg text-sm font-medium transition">취소</button>
-          <button type="submit" id="submit-btn" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-5 py-2 rounded-lg text-sm font-bold transition">저장하기</button>
+        <div class="flex justify-end space-x-2 pt-2 border-t border-gray-100">
+          <button type="button" onclick="closeWriteModal()" class="bg-gray-100 hover:bg-gray-200 text-slate-600 px-4 py-2 rounded-lg text-xs font-bold transition">취소</button>
+          <button type="submit" id="submit-btn" class="bg-kosha-blue hover:bg-[#003d82] text-white px-5 py-2 rounded-lg text-xs font-bold transition">등록하기</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- ==================== [모달 4] 게시글 읽기 모달 ==================== -->
-  <div id="read-modal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full shadow-xl overflow-hidden">
-      <div class="safe-dark text-white p-4 flex justify-between items-center">
-        <span id="read-category" class="bg-amber-400 text-slate-950 text-xs px-2.5 py-0.5 rounded font-bold mr-2">분류</span>
-        <button onclick="closeReadModal()" class="text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+  <!-- ==================== [모달 4] 게시글 상세 읽기 모달 ==================== -->
+  <div id="read-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-lg w-full shadow-2xl overflow-hidden">
+      <div class="kosha-blue text-white p-4 flex justify-between items-center">
+        <span id="read-category" class="bg-amber-400 text-slate-950 text-[10px] px-2.5 py-1 rounded font-bold mr-2">공종분류</span>
+        <button onclick="closeReadModal()" class="text-slate-300 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
       <div class="p-6 space-y-4">
         <div>
-          <h3 id="read-title" class="text-xl font-bold text-slate-900 leading-tight">제목이 들어가는 공간</h3>
-          <div class="flex items-center text-xs text-slate-400 space-x-3 mt-2">
-            <span>작성자: <span id="read-author" class="font-semibold text-slate-700">이도겸</span></span>
-            <span>작성일: <span id="read-date">2026-06-11</span></span>
+          <h3 id="read-title" class="text-lg font-extrabold text-slate-900 leading-tight">보고서의 원제목 영역</h3>
+          <div class="flex items-center text-[10px] text-gray-400 space-x-3 mt-2 font-medium">
+            <span>제안인: <span id="read-author" class="font-bold text-slate-700">이도겸</span></span>
+            <span>작성기한: <span id="read-date">2026-06-11</span></span>
           </div>
         </div>
         <hr class="border-gray-100">
-        <div id="read-content" class="text-sm text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-100 min-h-[150px]">
-          상세 내용이 들어갈 자리입니다.
+        <div id="read-content" class="text-xs text-slate-700 leading-relaxed whitespace-pre-line bg-gray-50 p-4 rounded-lg border border-gray-200 min-h-[150px] font-medium">
+          자료 공유 본문 내용 영역
         </div>
       </div>
-      <div class="bg-gray-50 px-6 py-3.5 flex justify-between items-center">
-        <div class="flex space-x-2">
-          <button id="read-edit-btn" class="text-slate-600 hover:text-blue-600 text-xs font-semibold flex items-center">
+      <div class="bg-gray-50 px-6 py-3.5 flex justify-between items-center border-t border-gray-100">
+        <div class="flex space-x-3">
+          <button id="read-edit-btn" class="text-slate-600 hover:text-blue-600 text-xs font-extrabold flex items-center">
             <i class="fa-solid fa-eraser mr-1"></i> 수정
           </button>
-          <button id="read-delete-btn" class="text-slate-600 hover:text-rose-600 text-xs font-semibold flex items-center">
+          <button id="read-delete-btn" class="text-slate-600 hover:text-rose-600 text-xs font-extrabold flex items-center">
             <i class="fa-solid fa-trash-can mr-1"></i> 삭제
           </button>
         </div>
-        <button onclick="closeReadModal()" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition">목록으로</button>
+        <button onclick="closeReadModal()" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-xs font-bold transition">목록보기</button>
       </div>
     </div>
   </div>
 
-  <!-- 커스텀 에러/알림 모달 (브라우저 alert 대체용) -->
+  <!-- 커스텀 알림/경고창 모달 -->
   <div id="alert-modal" class="hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl max-w-sm w-full p-6 shadow-xl text-center">
-      <div class="text-amber-500 mb-3 text-4xl">
-        <i class="fa-solid fa-circle-info"></i>
+    <div class="bg-white rounded-xl max-w-sm w-full p-6 shadow-2xl text-center">
+      <div class="text-kosha-blue mb-3 text-4xl">
+        <i class="fa-solid fa-circle-check"></i>
       </div>
-      <h4 id="alert-title" class="font-bold text-slate-900 text-lg mb-2">알림</h4>
-      <p id="alert-msg" class="text-sm text-slate-600 mb-6 whitespace-pre-line">알림 메시지 본문</p>
-      <button onclick="closeAlert()" class="w-full bg-slate-950 hover:bg-slate-800 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">확인</button>
+      <h4 id="alert-title" class="font-extrabold text-slate-900 text-base mb-1">알림</h4>
+      <p id="alert-msg" class="text-xs text-slate-600 mb-6 whitespace-pre-line font-medium">알림 메시지 상세 내역</p>
+      <button onclick="closeAlert()" class="w-full bg-[#004b9e] hover:bg-[#003d82] text-white font-bold py-2.5 rounded-lg text-xs transition shadow-sm">완료</button>
     </div>
   </div>
 
@@ -524,7 +604,6 @@
     let currentUser = null;
     let currentAppId = 'safety-manager-home-v1';
 
-    // Firebase 전역 변수 파싱 및 세팅
     const appId = typeof __app_id !== 'undefined' ? __app_id : currentAppId;
     let firebaseConfig;
 
@@ -542,7 +621,7 @@
         };
       }
       
-      // 호환 라이브러리 방식(firebase-app-compat.js)에 맞춰 전역 firebase 객체 검증 후 초기화 진행
+      // 전역 firebase 객체 안정성 검사 후 초기화
       if (typeof firebase !== 'undefined' && firebaseConfig && firebaseConfig.apiKey) {
         const app = firebase.initializeApp(firebaseConfig);
         auth = firebase.auth(app);
@@ -575,20 +654,17 @@
     function setupLocalFallback() {
       currentUser = { uid: "local-user-" + Math.floor(Math.random() * 100000) };
       updateUserUI();
-      // 로컬 오프라인 데이터를 렌더링합니다.
       sharePosts = [...fallbackSharePosts];
       boardPosts = [...fallbackBoardPosts];
       renderShareView();
       renderBoardView();
     }
 
-    // 인증 상태 리스너 등록
     if (auth) {
       auth.onAuthStateChanged((user) => {
         currentUser = user;
         updateUserUI();
         if (user) {
-          // 인증이 완료되면 데이터들을 구독합니다.
           startDataSubscription();
         } else {
           setupLocalFallback();
@@ -605,11 +681,9 @@
     }
 
     // ------------------ (3) 데이터 저장소 및 메모리 관리 ------------------
-    // 실시간 구독 목록 저장 (메모리 로딩)
     let sharePosts = [];
     let boardPosts = [];
 
-    // 더미데이터 (서버 연동 전 혹은 실패 시 대체 표시용)
     const fallbackSharePosts = [
       {
         id: "dummy-s1",
@@ -646,7 +720,6 @@
       }
     ];
 
-    // Firestore 데이터 실시간 구동 및 구독 설정
     let shareUnsubscribe = null;
     let boardUnsubscribe = null;
 
@@ -656,7 +729,6 @@
       const appIdClean = typeof __app_id !== 'undefined' ? __app_id : currentAppId;
 
       // RULE 1, 2 에 따라 심플 쿼리만 사용하고 정렬은 메모리에서 처리합니다.
-      // 1. 자료실(Share) 실시간 바인딩
       const shareCollectionRef = db.collection('artifacts').doc(appIdClean).collection('public').doc('data').collection('share_posts');
       
       shareUnsubscribe = shareCollectionRef.onSnapshot((querySnapshot) => {
@@ -664,7 +736,6 @@
         querySnapshot.forEach((doc) => {
           posts.push({ id: doc.id, ...doc.data() });
         });
-        // 메모리 정렬 (최신순)
         sharePosts = posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         renderShareView();
       }, (error) => {
@@ -673,7 +744,6 @@
         renderShareView();
       });
 
-      // 2. 게시판(Board) 실시간 바인딩
       const boardCollectionRef = db.collection('artifacts').doc(appIdClean).collection('public').doc('data').collection('board_posts');
       
       boardUnsubscribe = boardCollectionRef.onSnapshot((querySnapshot) => {
@@ -681,7 +751,6 @@
         querySnapshot.forEach((doc) => {
           posts.push({ id: doc.id, ...doc.data() });
         });
-        // 메모리 정렬 (최신순)
         boardPosts = posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         renderBoardView();
       }, (error) => {
@@ -693,7 +762,6 @@
 
     // ------------------ (4) 렌더링 함수들 ------------------
 
-    // 자료공유방 렌더링
     function renderShareView() {
       const container = document.getElementById('share-list');
       if (!container) return;
@@ -709,28 +777,27 @@
       }
 
       container.innerHTML = sharePosts.map(post => `
-        <div class="bg-slate-50 rounded-xl p-5 border border-slate-100 hover:border-amber-300 transition-colors shadow-xs flex flex-col justify-between">
+        <div class="bg-white rounded-lg p-5 border border-gray-200 hover:border-kosha-blue hover:shadow-md transition shadow-xs flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between mb-3">
-              <span class="bg-amber-100 text-amber-900 text-xs px-2.5 py-1 rounded-md font-bold">
+              <span class="bg-[#eef4fc] text-kosha-blue text-[10px] px-2.5 py-1 rounded-md font-bold border border-blue-100">
                 <i class="fa-regular fa-file-lines mr-1"></i> ${post.category || '일반자료'}
               </span>
-              <span class="text-xs text-slate-400"><i class="fa-regular fa-clock mr-1"></i> ${formatDate(post.createdAt)}</span>
+              <span class="text-[10px] text-gray-400 font-mono"><i class="fa-regular fa-clock mr-1"></i> ${formatDate(post.createdAt)}</span>
             </div>
-            <h3 class="font-bold text-slate-900 text-base mb-2 line-clamp-1">${escapeHtml(post.title)}</h3>
-            <p class="text-sm text-slate-600 line-clamp-3 mb-4 whitespace-pre-wrap">${escapeHtml(post.content)}</p>
+            <h3 class="font-extrabold text-slate-900 text-sm md:text-base mb-2 line-clamp-1">${escapeHtml(post.title)}</h3>
+            <p class="text-xs text-slate-600 line-clamp-3 mb-4 whitespace-pre-wrap font-medium">${escapeHtml(post.content)}</p>
           </div>
-          <div class="pt-3 border-t border-slate-200/50 flex justify-between items-center">
-            <span class="text-xs text-slate-500 font-medium">작성자: ${escapeHtml(post.author)}</span>
-            <button onclick="viewPostDetail('share', '${post.id}')" class="text-amber-600 hover:text-amber-700 text-xs font-bold flex items-center">
-              자세히 보기 <i class="fa-solid fa-chevron-right ml-1"></i>
+          <div class="pt-3 border-t border-gray-100 flex justify-between items-center text-xs">
+            <span class="text-[11px] text-gray-500 font-bold">작성자: ${escapeHtml(post.author)}</span>
+            <button onclick="viewPostDetail('share', '${post.id}')" class="text-kosha-blue hover:text-blue-800 text-[11px] font-bold flex items-center">
+              전문 조회 <i class="fa-solid fa-chevron-right ml-1 text-[8px]"></i>
             </button>
           </div>
         </div>
       `).join('');
     }
 
-    // 소통게시판 렌더링
     function renderBoardView() {
       const tbody = document.getElementById('board-table-body');
       if (!tbody) return;
@@ -740,7 +807,7 @@
           <tr>
             <td colspan="5" class="py-12 text-center text-slate-400">
               <i class="fa-solid fa-comments text-3xl mb-2 text-slate-200"></i>
-              <p class="text-xs">등록된 이야기나 질문이 없습니다. 자유롭게 글을 써보세요!</p>
+              <p class="text-xs">등록된 제안이나 제보가 없습니다. 소중한 현장 의견을 적어주세요!</p>
             </td>
           </tr>
         `;
@@ -748,16 +815,16 @@
       }
 
       tbody.innerHTML = boardPosts.map((post, index) => `
-        <tr class="hover:bg-white transition cursor-pointer" onclick="viewPostDetail('board', '${post.id}')">
-          <td class="py-4 px-4 text-center text-xs text-slate-400 font-medium">${boardPosts.length - index}</td>
-          <td class="py-4 px-4 font-medium text-slate-900 truncate max-w-xs sm:max-w-md">
+        <tr class="hover:bg-slate-50 transition cursor-pointer" onclick="viewPostDetail('board', '${post.id}')">
+          <td class="py-3.5 px-4 text-center text-[10px] text-gray-400 font-mono">${boardPosts.length - index}</td>
+          <td class="py-3.5 px-4 font-bold text-slate-900 truncate max-w-xs sm:max-w-md">
             ${escapeHtml(post.title)}
           </td>
-          <td class="py-4 px-4 text-xs font-medium text-slate-600">${escapeHtml(post.author)}</td>
-          <td class="py-4 px-4 text-center text-xs text-slate-400">${formatDate(post.createdAt)}</td>
-          <td class="py-4 px-4 text-center">
-            <button onclick="event.stopPropagation(); viewPostDetail('board', '${post.id}')" class="text-xs bg-slate-200/80 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded">
-              보기
+          <td class="py-3.5 px-4 text-gray-600 font-bold">${escapeHtml(post.author)}</td>
+          <td class="py-3.5 px-4 text-center text-gray-400 font-mono">${formatDate(post.createdAt)}</td>
+          <td class="py-3.5 px-4 text-center">
+            <button onclick="event.stopPropagation(); viewPostDetail('board', '${post.id}')" class="text-[10px] bg-slate-100 hover:bg-kosha-blue hover:text-white text-slate-700 px-2 py-1 rounded font-bold border border-gray-200 transition">
+              검토
             </button>
           </td>
         </tr>
@@ -766,7 +833,6 @@
 
     // ------------------ (5) 메뉴 네비게이션 제어 ------------------
     function navigate(viewId) {
-      // 뷰 토글
       const views = ['profile', 'laws', 'share', 'board'];
       views.forEach(v => {
         const element = document.getElementById(`view-${v}`);
@@ -778,23 +844,19 @@
           }
         }
 
-        // 네비게이션 버튼 스타일 갱신
         const navBtn = document.getElementById(`nav-${v}`);
         if (navBtn) {
           if (v === viewId) {
-            navBtn.classList.add('text-amber-400', 'border-b-2', 'border-amber-400');
-            navBtn.classList.remove('text-white');
+            navBtn.classList.add('text-kosha-blue', 'border-b-2', 'border-kosha-blue');
+            navBtn.classList.remove('text-gray-600');
           } else {
-            navBtn.classList.remove('text-amber-400', 'border-b-2', 'border-amber-400');
-            navBtn.classList.add('text-white');
+            navBtn.classList.remove('text-kosha-blue', 'border-b-2', 'border-kosha-blue');
+            navBtn.classList.add('text-gray-600');
           }
         }
       });
 
-      // 모바일 메뉴가 열려있다면 닫기
       document.getElementById('mobile-menu').classList.add('hidden');
-      
-      // 페이지 상단으로 스크롤 이동
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -827,7 +889,6 @@
       document.getElementById('contact-modal').classList.add('hidden');
     }
 
-    // 법령 상세 보기 모달 오픈
     function showLawDetail(title, desc) {
       document.getElementById('law-detail-title').innerHTML = `<i class="fa-solid fa-scale-balanced mr-2"></i> ${title}`;
       document.getElementById('law-detail-desc').textContent = desc;
@@ -838,30 +899,26 @@
       document.getElementById('law-detail-modal').classList.add('hidden');
     }
 
-    // 새글 작성 모달 오픈
     function openWriteModal(viewType, editPostId = null) {
       document.getElementById('post-form').reset();
       document.getElementById('post-id').value = '';
       document.getElementById('post-target-view').value = viewType;
       
-      // 기본 작성자 세팅
       document.getElementById('post-author').value = '이도겸';
       
-      // 모달 제목 및 분야 선택 필드 토글
       const modalTitle = document.getElementById('write-modal-title');
       const shareCategoryField = document.getElementById('share-field-category');
       
       if (viewType === 'share') {
-        modalTitle.innerHTML = `<i class="fa-solid fa-upload mr-2 text-amber-400"></i> 새 자료 업로드`;
+        modalTitle.innerHTML = `<i class="fa-solid fa-file-arrow-up mr-2 text-amber-400"></i> 안전 실무자료 라이브러리 등록`;
         shareCategoryField.classList.remove('hidden');
       } else {
-        modalTitle.innerHTML = `<i class="fa-solid fa-pen mr-2 text-amber-400"></i> 새 게시글 작성`;
+        modalTitle.innerHTML = `<i class="fa-solid fa-pen-nib mr-2 text-amber-400"></i> 신문고 의견 및 질의 등록`;
         shareCategoryField.classList.add('hidden');
       }
 
-      // 수정 모드인 경우 데이터 로드
       if (editPostId) {
-        modalTitle.innerHTML = `<i class="fa-solid fa-eraser mr-2 text-amber-400"></i> 게시글 수정`;
+        modalTitle.innerHTML = `<i class="fa-solid fa-eraser mr-2 text-amber-400"></i> 올린 보고서 수정`;
         const postList = (viewType === 'share') ? sharePosts : boardPosts;
         const post = postList.find(p => p.id === editPostId);
         if (post) {
@@ -882,7 +939,6 @@
       document.getElementById('write-modal').classList.add('hidden');
     }
 
-    // 포스트 저장 (신규 등록 및 수정 병합)
     async function savePost(e) {
       e.preventDefault();
       
@@ -900,38 +956,32 @@
         postData.category = document.getElementById('post-category').value;
       }
 
-      // Firestore가 가동 중이고 사용자가 로그인되어 있을 때
       if (db && auth && currentUser) {
         try {
           const collectionName = (viewType === 'share') ? 'share_posts' : 'board_posts';
           const collectionRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection(collectionName);
 
           if (postId) {
-            // 수정 모드
             const docRef = collectionRef.doc(postId);
             await docRef.update(postData);
-            showAlert('완료', '성공적으로 게시글이 수정되었습니다.');
+            showAlert('완료', '성공적으로 보고사항이 수정되었습니다.');
           } else {
-            // 신규 등록
-            postData.ownerId = currentUser.uid; // 권한 확인용 작성자 식별자 보존
+            postData.ownerId = currentUser.uid;
             await collectionRef.add(postData);
-            showAlert('완료', '새로운 글이 안전하게 게시판에 등록되었습니다!');
+            showAlert('완료', '안전 시스템에 성공적으로 기록/전파되었습니다.');
           }
         } catch (err) {
           console.error("데이터 저장 오류:", err);
           showAlert('에러', '데이터베이스 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
         }
       } else {
-        // 로컬 오프라인 메모리 모드 대응
         if (postId) {
-          // 수정
           const postList = (viewType === 'share') ? sharePosts : boardPosts;
           const idx = postList.findIndex(p => p.id === postId);
           if (idx !== -1) {
             postList[idx] = { ...postList[idx], ...postData };
           }
         } else {
-          // 추가
           postData.id = 'local-' + Date.now();
           if (viewType === 'share') {
             sharePosts.unshift(postData);
@@ -940,17 +990,15 @@
           }
         }
         
-        // 뷰 강제 새로고침
         if (viewType === 'share') renderShareView();
         else renderBoardView();
         
-        showAlert('완료', '로컬 임시 모드로 정상 등록되었습니다. (데이터는 메모리에 유지됩니다)');
+        showAlert('안내', '보안 통신망 미연결로 인해 현 브라우저 메모리에 가상 등록되었습니다.');
       }
 
       closeWriteModal();
     }
 
-    // 게시글 상세 보기 모달
     function viewPostDetail(viewType, id) {
       const post = findPost(viewType, id);
       if (!post) return;
@@ -961,7 +1009,7 @@
         categorySpan.textContent = post.category || '양식/자료';
       } else {
         categorySpan.style.display = 'inline-block';
-        categorySpan.textContent = '소통/자유';
+        categorySpan.textContent = '열린 신문고';
       }
 
       document.getElementById('read-title').textContent = post.title;
@@ -969,7 +1017,6 @@
       document.getElementById('read-date').textContent = formatDate(post.createdAt);
       document.getElementById('read-content').textContent = post.content;
 
-      // 수정 및 삭제 버튼 이벤트 동적 바인딩
       const editBtn = document.getElementById('read-edit-btn');
       const deleteBtn = document.getElementById('read-delete-btn');
 
@@ -985,17 +1032,14 @@
       document.getElementById('read-modal').classList.remove('hidden');
     }
 
-    // 게시글 상세 모달 닫기
     function closeReadModal() {
       document.getElementById('read-modal').classList.add('hidden');
     }
 
-    // 게시글 삭제
     async function deletePost(viewType, id) {
       closeReadModal();
       
-      // 사용자 컨펌 대행 (alert 비권장 대체)
-      const isConfirmed = confirm("정말로 이 소중한 게시글을 삭제하시겠습니까?");
+      const isConfirmed = confirm("정말로 안전 검토 완료 후 이 기록을 삭제하시겠습니까?");
       if (!isConfirmed) return;
 
       if (db && auth && currentUser) {
@@ -1004,13 +1048,12 @@
           const docRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection(collectionName).doc(id);
           
           await docRef.delete();
-          showAlert('성공', '게시글이 데이터베이스에서 완벽히 삭제되었습니다.');
+          showAlert('성공', '기록물이 안전하게 파기되었습니다.');
         } catch (err) {
           console.error("삭제 과정 오류 발생:", err);
-          showAlert('삭제 실패', '본인이 작성한 글이 아니거나 권한이 부족하여 삭제를 진행할 수 없습니다.');
+          showAlert('삭제 실패', '기록물에 대한 파기 권한이 없습니다.');
         }
       } else {
-        // 로컬 오프라인 데이터 삭제
         if (viewType === 'share') {
           sharePosts = sharePosts.filter(p => p.id !== id);
           renderShareView();
@@ -1018,7 +1061,7 @@
           boardPosts = boardPosts.filter(p => p.id !== id);
           renderBoardView();
         }
-        showAlert('완료', '임시 글이 목록에서 성공적으로 제거되었습니다.');
+        showAlert('완료', '메모리에서 성공적으로 기록이 제외되었습니다.');
       }
     }
 
@@ -1037,7 +1080,6 @@
       return `${yyyy}-${mm}-${dd}`;
     }
 
-    // HTML 특수기호 안전 예방 코드
     function escapeHtml(text) {
       if (!text) return "";
       return text
@@ -1048,7 +1090,6 @@
         .replace(/'/g, "&#039;");
     }
 
-    // 커스텀 알림창(alert 대용) 제어
     function showAlert(title, msg) {
       document.getElementById('alert-title').textContent = title;
       document.getElementById('alert-msg').textContent = msg;
@@ -1061,10 +1102,7 @@
 
     // ------------------ (9) 실행 진입점 ------------------
     window.onload = async function() {
-      // 1. 네비게이션은 프로필로 디폴트 고정
       navigate('profile');
-      
-      // 2. 가상 인증 및 Firebase 데이터 연동 시작
       await initAuth();
     };
   </script>
